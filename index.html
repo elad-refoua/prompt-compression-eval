@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>הערכת שיחות טיפוליות - מחקר דחיסת פרומפט</title>
+<style>
+  :root {
+    --primary: #2563eb; --primary-dark: #1d4ed8;
+    --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0;
+    --text: #1e293b; --text-light: #64748b;
+    --success: #16a34a; --success-bg: #f0fdf4;
+    --accent-a: #7c3aed; --accent-b: #0891b2;
+    --therapist-bg: #eff6ff; --therapist-border: #bfdbfe;
+    --client-bg: #fefce8; --client-border: #fde68a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh; }
+  .container { max-width: 960px; margin: 0 auto; padding: 20px; }
+  .header { background: linear-gradient(135deg, #1e3a5f, #2563eb); color: white; padding: 24px; text-align: center; border-radius: 12px; margin-bottom: 24px; }
+  .header h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .header p { opacity: 0.85; font-size: 0.95rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  h2 { font-size: 1.25rem; margin-bottom: 12px; }
+  h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .btn { display: inline-block; padding: 10px 24px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #15803d; }
+  .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .welcome-form { max-width: 500px; margin: 0 auto; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem; }
+  .form-group .hint { color: var(--text-light); font-size: 0.85rem; margin-bottom: 6px; display: block; }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; direction: rtl;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+  .progress-section { margin-bottom: 20px; }
+  .progress-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); border-radius: 4px; transition: width 0.4s; }
+  .progress-label { font-size: 0.9rem; color: var(--text-light); margin-top: 6px; text-align: center; }
+  .expert-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; }
+  .expert-bar .name { font-weight: 600; }
+  .pair-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 16px; }
+  .pair-card { background: var(--card); border: 2px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .pair-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .pair-card.completed { border-color: var(--success); background: var(--success-bg); }
+  .pair-card .pair-num { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+  .pair-card.completed .pair-num { color: var(--success); }
+  .pair-card .pair-status { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
+  .pair-card.completed .pair-status { color: var(--success); }
+  .conv-tabs { display: flex; margin-bottom: 0; border-radius: 10px 10px 0 0; overflow: hidden; border: 2px solid var(--border); border-bottom: none; }
+  .conv-tab { flex: 1; padding: 14px; text-align: center; cursor: pointer; font-weight: 600; font-size: 1rem; background: var(--bg); border: none; transition: all 0.2s; }
+  .conv-tab.active-a { background: var(--accent-a); color: white; }
+  .conv-tab.active-b { background: var(--accent-b); color: white; }
+  .conv-tab:not(.active-a):not(.active-b):hover { background: #e2e8f0; }
+  .chat-container { border: 2px solid var(--border); border-radius: 0 0 10px 10px; padding: 20px; background: #fafbfc; max-height: 600px; overflow-y: auto; margin-bottom: 20px; }
+  .chat-container.border-a { border-color: var(--accent-a); }
+  .chat-container.border-b { border-color: var(--accent-b); }
+  .chat-turn { margin-bottom: 16px; display: flex; gap: 10px; }
+  .chat-turn:last-child { margin-bottom: 0; }
+  .chat-turn.therapist { flex-direction: row-reverse; }
+  .chat-bubble { max-width: 80%; padding: 12px 16px; border-radius: 12px; line-height: 1.7; font-size: 0.95rem; position: relative; }
+  .chat-bubble .role-label { font-size: 0.75rem; font-weight: 700; margin-bottom: 4px; display: block; }
+  .therapist .chat-bubble { background: var(--therapist-bg); border: 1px solid var(--therapist-border); border-top-left-radius: 4px; }
+  .therapist .role-label { color: var(--primary); }
+  .client .chat-bubble { background: var(--client-bg); border: 1px solid var(--client-border); border-top-right-radius: 4px; }
+  .client .role-label { color: #92400e; }
+  .chat-bubble .body-lang { color: #6b7280; font-style: italic; }
+  .chat-bubble .verbal { font-weight: 600; }
+  .turn-num { font-size: 0.7rem; color: var(--text-light); align-self: center; min-width: 20px; text-align: center; }
+  .rating-section { margin-bottom: 20px; padding: 20px; border-radius: 10px; border: 2px solid var(--border); }
+  .rating-section.section-a { border-color: var(--accent-a); }
+  .rating-section.section-a h3 { color: var(--accent-a); }
+  .rating-section.section-b { border-color: var(--accent-b); }
+  .rating-section.section-b h3 { color: var(--accent-b); }
+  .rating-section.section-comparison { border-color: #d97706; }
+  .rating-section.section-comparison h3 { color: #d97706; }
+  .rating-section.section-overall { border-color: var(--success); }
+  .rating-section.section-overall h3 { color: var(--success); }
+  .rating-item { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .rating-item:last-of-type { border-bottom: none; margin-bottom: 8px; }
+  .rating-item .q-label { display: block; font-weight: 500; margin-bottom: 10px; font-size: 0.95rem; line-height: 1.5; }
+  .rating-item .q-hint { display: block; font-size: 0.85rem; color: var(--text-light); margin-bottom: 8px; line-height: 1.5; }
+  .q-num { display: inline-block; background: #f1f5f9; color: var(--text-light); border-radius: 4px; padding: 1px 6px; font-size: 0.8rem; margin-left: 6px; }
+  .likert { display: flex; justify-content: space-between; gap: 4px; }
+  .likert label { flex: 1; text-align: center; cursor: pointer; }
+  .likert input[type="radio"] { display: none; }
+  .likert .likert-option { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.75rem; transition: all 0.15s; line-height: 1.3; min-height: 56px; }
+  .likert .likert-num { font-size: 1.1rem; font-weight: 700; margin-bottom: 2px; }
+  .likert input:checked + .likert-option { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+  .section-a .likert input:checked + .likert-option { border-color: var(--accent-a); background: #f5f3ff; color: var(--accent-a); }
+  .section-b .likert input:checked + .likert-option { border-color: var(--accent-b); background: #ecfeff; color: var(--accent-b); }
+  .section-comparison .likert input:checked + .likert-option { border-color: #d97706; background: #fffbeb; color: #d97706; }
+  .confidence-scale { display: flex; justify-content: space-between; gap: 4px; }
+  .confidence-scale label { flex: 1; text-align: center; cursor: pointer; }
+  .confidence-scale input[type="radio"] { display: none; }
+  .confidence-scale .conf-option { display: block; padding: 10px 4px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.8rem; transition: all 0.15s; line-height: 1.3; }
+  .confidence-scale .conf-num { display: block; font-size: 1rem; font-weight: 700; margin-bottom: 2px; }
+  .confidence-scale input:checked + .conf-option { border-color: #d97706; background: #fffbeb; color: #d97706; }
+  .radio-choice { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .radio-choice label { cursor: pointer; }
+  .radio-choice input[type="radio"] { display: none; }
+  .radio-choice .choice-option { display: inline-block; padding: 10px 20px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-weight: 600; transition: all 0.15s; }
+  .radio-choice input:checked + .choice-option { border-color: #d97706; background: #fffbeb; color: #d97706; }
+  .radio-choice.pref input:checked + .choice-option { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+  .comment-box { width: 100%; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; font-family: inherit; resize: vertical; min-height: 60px; direction: rtl; }
+  .comment-box:focus { outline: none; border-color: var(--primary); }
+  .comment-label { font-size: 0.9rem; color: var(--text-light); margin-bottom: 6px; display: block; }
+  .actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 20px; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 10px; font-size: 0.95rem; z-index: 1000; opacity: 0; transition: opacity 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .toast.show { opacity: 1; }
+  .toast.error { background: #dc2626; }
+  .toast.success { background: var(--success); }
+  .completion { text-align: center; padding: 40px 20px; }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; color: var(--text-light); text-decoration: none; font-size: 0.9rem; margin-bottom: 12px; cursor: pointer; }
+  .back-link:hover { color: var(--primary); }
+  .instructions { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 16px; margin-bottom: 16px; font-size: 0.9rem; line-height: 1.7; }
+  .setup-card { text-align: center; }
+  .setup-card input { display: block; width: 100%; max-width: 500px; margin: 12px auto; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.9rem; direction: ltr; text-align: center; }
+  .setup-card input:focus { outline: none; border-color: var(--primary); }
+  .error-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; color: #dc2626; margin-top: 12px; font-size: 0.9rem; }
+  .validation-error { border-color: #dc2626 !important; animation: shake 0.3s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+  @media (max-width: 600px) {
+    .container { padding: 12px; }
+    .pair-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .likert { flex-wrap: wrap; }
+    .likert label { flex: 0 0 calc(25% - 4px); }
+    .confidence-scale label { flex: 0 0 calc(33.3% - 4px); }
+    .confidence-scale { flex-wrap: wrap; }
+    .actions { flex-direction: column; }
+    .chat-bubble { max-width: 90%; font-size: 0.9rem; }
+    .radio-choice { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="screen-setup" class="screen">
+    <div class="header">
+      <h1>הערכת שיחות טיפוליות</h1>
+      <p>מחקר דחיסת פרומפט וסימולציה קלינית</p>
+    </div>
+    <div class="card setup-card">
+      <h2>הגדרת חיבור</h2>
+      <p style="color:var(--text-light); font-size:0.9rem;">הזינו את כתובת ה-API של Google Apps Script</p>
+      <input type="text" id="api-url-input" placeholder="https://script.google.com/macros/s/.../exec" dir="ltr">
+      <br>
+      <button class="btn btn-primary" id="btn-save-api">שמור והמשך</button>
+      <div id="setup-error" class="error-box" style="display:none;"></div>
+    </div>
+  </div>
+
+  <div id="screen-welcome" class="screen">
+    <div class="header">
+      <h1>הערכת שיחות טיפוליות</h1>
+      <p>מחקר דחיסת פרומפט וסימולציה קלינית</p>
+    </div>
+    <div class="card">
+      <h2>ברוכים הבאים</h2>
+      <div style="font-size:0.9rem; line-height:1.8; color:var(--text); margin-bottom:20px;">
+        <p>במחקר זה אנו בוחנים את איכות שיחות טיפוליות שנוצרו באמצעות בינה מלאכותית.</p>
+        <p style="margin-top:8px;">תתבקשו להעריך <strong>זוגות של שיחות</strong>. בכל זוג שתי שיחות עם אותו קלט של מטפל/ת.</p>
+        <p style="margin-top:8px;">לכל שיחה תדרגו 7 ממדים בסולם 1-7, ואז תתבקשו להשוות בין שתי השיחות.</p>
+        <p style="margin-top:8px;">ההערכה אנונימית ולצרכי מחקר בלבד. זמן משוער: 15-20 דקות לזוג.</p>
+      </div>
+      <div class="welcome-form">
+        <div class="form-group">
+          <label for="expert-name">שם מלא</label>
+          <input type="text" id="expert-name" placeholder="הזינו את שמכם" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label for="expert-role">תפקיד מקצועי</label>
+          <select id="expert-role">
+            <option value="">בחרו תפקיד...</option>
+            <option value="clinical_psychologist">פסיכולוג/ית קליני/ת</option>
+            <option value="therapist">מטפל/ת (עו"ס, ייעוץ, אחר)</option>
+            <option value="psychiatrist">פסיכיאטר/ית</option>
+            <option value="student_advanced">סטודנט/ית מתקדם/ת (פרקטיקום+)</option>
+            <option value="student">סטודנט/ית</option>
+            <option value="researcher">חוקר/ת</option>
+            <option value="other">אחר</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expert-years">שנות ניסיון קליני</label>
+          <select id="expert-years">
+            <option value="">בחרו...</option>
+            <option value="0">ללא ניסיון קליני</option>
+            <option value="0-2">0-2 שנים</option>
+            <option value="3-5">3-5 שנים</option>
+            <option value="6-10">6-10 שנים</option>
+            <option value="11-20">11-20 שנים</option>
+            <option value="20+">20+ שנים</option>
+          </select>
+        </div>
+        <div class="form-group" id="returning-group" style="display:none;">
+          <label for="returning-select">מומחה חוזר?</label>
+          <span class="hint">אם כבר מילאתם חלק מההערכה בעבר, בחרו את שמכם</span>
+          <select id="returning-select">
+            <option value="">מומחה חדש</option>
+          </select>
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+          <button class="btn btn-primary" id="btn-start">התחל הערכה</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-pairs" class="screen">
+    <div class="expert-bar">
+      <span>מומחה: <span class="name" id="display-name"></span></span>
+      <span id="overall-progress">0/0 הושלמו</span>
+    </div>
+    <div class="card">
+      <h2>בחרו זוג שיחות להערכה</h2>
+      <div class="progress-section">
+        <div class="progress-bar"><div class="fill" id="progress-fill" style="width:0%"></div></div>
+        <div class="progress-label" id="progress-label"></div>
+      </div>
+      <div class="pair-grid" id="pair-grid"></div>
+    </div>
+    <div id="completion-msg" class="card completion" style="display:none;">
+      <div style="font-size:3rem; margin-bottom:12px;">&#10004;</div>
+      <h2>סיימתם! תודה רבה!</h2>
+      <p style="color:var(--text-light); margin-top:8px;">כל ההערכות נשמרו בהצלחה. תרומתכם חשובה מאוד למחקר.</p>
+    </div>
+  </div>
+
+  <div id="screen-eval" class="screen">
+    <div class="expert-bar">
+      <span>מומחה: <span class="name" id="display-name2"></span></span>
+      <span>זוג <span id="display-pair"></span> מתוך <span id="display-total"></span></span>
+    </div>
+    <a class="back-link" id="btn-back-pairs">&#8592; חזרה לרשימת הזוגות</a>
+    <div class="instructions">
+      <strong>הנחיות:</strong> קראו את שתי השיחות (שיחה א' ושיחה ב') בעיון. שתיהן מציגות אינטראקציה בין מטפל/ת ומטופל/ת. לאחר הקריאה, דרגו כל שיחה בנפרד, ואז השוו ביניהן.
+    </div>
+    <div class="conv-tabs" id="conv-tabs">
+      <button class="conv-tab active-a" id="tab-a">שיחה א'</button>
+      <button class="conv-tab" id="tab-b">שיחה ב'</button>
+    </div>
+    <div id="chat-display-a" class="chat-container border-a"></div>
+    <div id="chat-display-b" class="chat-container border-b" style="display:none;"></div>
+    <div class="rating-section section-a" id="ratings-a-section">
+      <h3>דירוג שיחה א'</h3>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה א' ב-7 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
+      <div id="ratings-a"></div>
+    </div>
+    <div class="rating-section section-b" id="ratings-b-section">
+      <h3>דירוג שיחה ב'</h3>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה ב' ב-7 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
+      <div id="ratings-b"></div>
+    </div>
+    <div class="rating-section section-comparison" id="comparison-section">
+      <h3>השוואה בין השיחות</h3>
+      <div class="rating-item">
+        <span class="q-label">אחת השיחות נוצרה עם פרומפט מפורט (33,000 טוקנים), השנייה עם כרטיס דמות מקוצר (3,000 טוקנים). לדעתכם, איזו שיחה נוצרה עם הפרומפט המלא?</span>
+        <div class="radio-choice" id="forced-choice">
+          <label><input type="radio" name="forced_choice" value="a"><span class="choice-option">שיחה א'</span></label>
+          <label><input type="radio" name="forced_choice" value="b"><span class="choice-option">שיחה ב'</span></label>
+        </div>
+      </div>
+      <div class="rating-item">
+        <span class="q-label">עד כמה אתם בטוחים בבחירתכם?</span>
+        <div class="confidence-scale" id="confidence-scale"></div>
+      </div>
+      <div class="rating-item">
+        <span class="comment-label">מה גרם לכם לבחור? אילו הבדלים שמתם לב אליהם?</span>
+        <textarea class="comment-box" id="forced-reasoning" placeholder="תארו את ההבדלים שהבחנתם..."></textarea>
+      </div>
+    </div>
+    <div class="rating-section section-overall" id="overall-section">
+      <h3>רושם כללי</h3>
+      <div class="rating-item">
+        <span class="q-label">איזו שיחה הייתם מעדיפים להשתמש בה בתוכנית ההכשרה הקלינית שלכם?</span>
+        <div class="radio-choice pref" id="preference-choice">
+          <label><input type="radio" name="preference" value="a"><span class="choice-option">שיחה א'</span></label>
+          <label><input type="radio" name="preference" value="b"><span class="choice-option">שיחה ב'</span></label>
+          <label><input type="radio" name="preference" value="none"><span class="choice-option">אין העדפה</span></label>
+        </div>
+      </div>
+      <div class="rating-item">
+        <span class="comment-label">תצפיות נוספות? משהו שבלט לכם בשיחות שלא נלכד בשאלות הקודמות?</span>
+        <textarea class="comment-box" id="overall-comments" placeholder="הערות חופשיות..."></textarea>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-outline" id="btn-back-pairs2">&#8594; חזרה לרשימה</button>
+      <button class="btn btn-success" id="btn-submit">שמור הערכה &#10004;</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function() {
+  'use strict';
+  var CONFIG = null;
+  var DIMENSIONS = [];
+  var LIKERT_ANCHORS = {};
+  var CONFIDENCE_LABELS = {};
+  var PAIRS = [];
+  var API_URL = '';
+  var expertId = '';
+  var expertName = '';
+  var expertRole = '';
+  var expertYears = '';
+  var currentPairIndex = null;
+  var completedPairs = {};
+  var displayOrders = {};
+  var experts = [];
+
+  function $(id) { return document.getElementById(id); }
+
+  function parseChatText(text) {
+    var frag = document.createDocumentFragment();
+    var pattern = /(\*\*"[^"]*?"\*\*|\*\*[^*]*?\*\*|\[[^\]]*?\])/g;
+    var lastIndex = 0;
+    var match;
+    while ((match = pattern.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      }
+      var token = match[0];
+      var span = document.createElement('span');
+      if (token.startsWith('**"') && token.endsWith('"**')) {
+        span.className = 'verbal';
+        span.textContent = '\u201c' + token.slice(3, -3) + '\u201d';
+      } else if (token.startsWith('**') && token.endsWith('**')) {
+        span.className = 'verbal';
+        span.textContent = token.slice(2, -2);
+      } else if (token.startsWith('[') && token.endsWith(']')) {
+        span.className = 'body-lang';
+        span.textContent = token;
+      }
+      frag.appendChild(span);
+      lastIndex = pattern.lastIndex;
+    }
+    if (lastIndex < text.length) {
+      frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+    }
+    return frag;
+  }
+
+  function init() {
+    var params = new URLSearchParams(window.location.search);
+    API_URL = params.get('api') || localStorage.getItem('compression-eval-api') || '';
+    expertId = params.get('expert') || '';
+    bindEvents();
+    loadConfig().then(function() {
+      if (!API_URL) {
+        showScreen('setup');
+      } else if (expertId) {
+        loadExpert(expertId);
+      } else {
+        loadExpertsForReturning();
+        showScreen('welcome');
+      }
+    });
+  }
+
+  function bindEvents() {
+    $('btn-save-api').addEventListener('click', saveApi);
+    $('btn-start').addEventListener('click', startEvaluation);
+    $('btn-back-pairs').addEventListener('click', function() { showScreen('pairs'); });
+    $('btn-back-pairs2').addEventListener('click', function() { showScreen('pairs'); });
+    $('btn-submit').addEventListener('click', submitPair);
+    $('tab-a').addEventListener('click', function() { switchTab('a'); });
+    $('tab-b').addEventListener('click', function() { switchTab('b'); });
+    $('api-url-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') saveApi(); });
+    $('expert-name').addEventListener('keydown', function(e) { if (e.key === 'Enter') startEvaluation(); });
+  }
+
+  function loadConfig() {
+    return fetch('config.json')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        CONFIG = data;
+        DIMENSIONS = data.dimensions || [];
+        LIKERT_ANCHORS = data.likert_anchors || {};
+        CONFIDENCE_LABELS = data.confidence_labels || {};
+        PAIRS = data.pairs || [];
+      })
+      .catch(function(err) {
+        console.error('Failed to load config:', err);
+      });
+  }
+
+  function saveApi() {
+    var url = $('api-url-input').value.trim();
+    if (!url) { showToast('\u05e0\u05d0 \u05dc\u05d4\u05d6\u05d9\u05df \u05db\u05ea\u05d5\u05d1\u05ea API', 'error'); return; }
+    API_URL = url;
+    localStorage.setItem('compression-eval-api', url);
+    loadExpertsForReturning();
+    showScreen('welcome');
+  }
+
+  function loadExpertsForReturning() {
+    if (!API_URL) return;
+    fetch(API_URL + '?action=experts')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        experts = (data && data.experts) || [];
+        var sel = $('returning-select');
+        while (sel.options.length > 1) sel.remove(1);
+        if (experts.length > 0) {
+          $('returning-group').style.display = 'block';
+          experts.forEach(function(ex) {
+            var opt = document.createElement('option');
+            opt.value = String(ex.id);
+            opt.textContent = ex.name;
+            sel.appendChild(opt);
+          });
+        }
+      })
+      .catch(function() {});
+  }
+
+  function loadExpert(id) {
+    fetch(API_URL + '?action=expert&id=' + encodeURIComponent(id))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.error) { showScreen('welcome'); return; }
+        expertId = String(data.id);
+        expertName = data.name;
+        expertRole = data.role || '';
+        expertYears = data.years || '';
+        return fetch(API_URL + '?action=my_responses&expert_id=' + encodeURIComponent(expertId));
+      })
+      .then(function(r) { return r ? r.json() : null; })
+      .then(function(data) {
+        if (data && data.pairs) {
+          data.pairs.forEach(function(p) { completedPairs[p] = true; });
+        }
+        showScreen('pairs');
+      })
+      .catch(function() { showScreen('welcome'); });
+  }
+
+  function showScreen(name) {
+    document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+    $('screen-' + name).classList.add('active');
+    if (name === 'pairs') renderPairGrid();
+    window.scrollTo(0, 0);
+  }
+
+  function startEvaluation() {
+    var name = $('expert-name').value.trim();
+    var role = $('expert-role').value;
+    var years = $('expert-years').value;
+    var returning = $('returning-select').value;
+    if (returning) {
+      expertId = returning;
+      var found = experts.find(function(ex) { return String(ex.id) === returning; });
+      if (found) { expertName = found.name; expertRole = found.role || role; expertYears = found.years || years; }
+      loadExpert(expertId);
+      return;
+    }
+    if (!name) { $('expert-name').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d4\u05d6\u05d9\u05df \u05e9\u05dd', 'error'); return; }
+    $('expert-name').classList.remove('validation-error');
+    if (!role) { $('expert-role').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05ea\u05e4\u05e7\u05d9\u05d3', 'error'); return; }
+    $('expert-role').classList.remove('validation-error');
+    if (!years) { $('expert-years').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e9\u05e0\u05d5\u05ea \u05e0\u05d9\u05e1\u05d9\u05d5\u05df', 'error'); return; }
+    $('expert-years').classList.remove('validation-error');
+    expertName = name;
+    expertRole = role;
+    expertYears = years;
+    if (API_URL) {
+      fetch(API_URL, {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'register_expert', name: name, role: role, years: years })
+      }).then(function() {
+        return fetch(API_URL + '?action=experts');
+      }).then(function(r) { return r.json(); }).then(function(data) {
+        experts = (data && data.experts) || [];
+        var found = experts.find(function(ex) { return ex.name === name; });
+        if (found) expertId = String(found.id);
+        showScreen('pairs');
+      }).catch(function() { showScreen('pairs'); });
+    } else {
+      showScreen('pairs');
+    }
+  }
+
+  function renderPairGrid() {
+    $('display-name').textContent = expertName;
+    var grid = $('pair-grid');
+    while (grid.firstChild) grid.removeChild(grid.firstChild);
+    var doneCount = 0;
+    PAIRS.forEach(function(pair, idx) {
+      var done = !!completedPairs[pair.id];
+      if (done) doneCount++;
+      var numEl = document.createElement('div');
+      numEl.className = 'pair-num';
+      numEl.textContent = String(idx + 1);
+      var statusEl = document.createElement('div');
+      statusEl.className = 'pair-status';
+      statusEl.textContent = done ? '\u05d4\u05d5\u05e9\u05dc\u05dd' : '\u05de\u05de\u05ea\u05d9\u05df';
+      var card = document.createElement('div');
+      card.className = 'pair-card' + (done ? ' completed' : '');
+      card.appendChild(numEl);
+      card.appendChild(statusEl);
+      card.dataset.pairIdx = idx;
+      card.addEventListener('click', function() { openPair(parseInt(this.dataset.pairIdx)); });
+      grid.appendChild(card);
+    });
+    var total = PAIRS.length;
+    $('overall-progress').textContent = doneCount + '/' + total + ' \u05d4\u05d5\u05e9\u05dc\u05de\u05d5';
+    $('progress-fill').style.width = (total > 0 ? (doneCount / total * 100) : 0) + '%';
+    $('progress-label').textContent = doneCount + ' \u05de\u05ea\u05d5\u05da ' + total + ' \u05d6\u05d5\u05d2\u05d5\u05ea \u05d4\u05d5\u05e9\u05dc\u05de\u05d5';
+    $('completion-msg').style.display = doneCount === total && total > 0 ? 'block' : 'none';
+  }
+
+  function openPair(idx) {
+    currentPairIndex = idx;
+    var pair = PAIRS[idx];
+    $('display-name2').textContent = expertName;
+    $('display-pair').textContent = String(idx + 1);
+    $('display-total').textContent = String(PAIRS.length);
+    if (!displayOrders[pair.id]) {
+      if (Math.random() < 0.5) {
+        displayOrders[pair.id] = { a_source: 'conversation_a', b_source: 'conversation_b' };
+      } else {
+        displayOrders[pair.id] = { a_source: 'conversation_b', b_source: 'conversation_a' };
+      }
+    }
+    var order = displayOrders[pair.id];
+    renderChat('chat-display-a', pair[order.a_source].turns);
+    renderChat('chat-display-b', pair[order.b_source].turns);
+    renderDimensionRatings('ratings-a', 'a');
+    renderDimensionRatings('ratings-b', 'b');
+    renderConfidenceScale();
+    document.querySelectorAll('#screen-eval input[type="radio"]').forEach(function(r) { r.checked = false; });
+    $('forced-reasoning').value = '';
+    $('overall-comments').value = '';
+    switchTab('a');
+    showScreen('eval');
+  }
+
+  function renderChat(containerId, turns) {
+    var container = $(containerId);
+    while (container.firstChild) container.removeChild(container.firstChild);
+    var turnCount = 0;
+    turns.forEach(function(turn) {
+      turnCount++;
+      var div = document.createElement('div');
+      div.className = 'chat-turn ' + (turn.role === 'therapist' ? 'therapist' : 'client');
+      var bubble = document.createElement('div');
+      bubble.className = 'chat-bubble';
+      var roleLabel = document.createElement('span');
+      roleLabel.className = 'role-label';
+      roleLabel.textContent = turn.role === 'therapist' ? '\u05de\u05d8\u05e4\u05dc/\u05ea' : '\u05de\u05d8\u05d5\u05e4\u05dc/\u05ea';
+      bubble.appendChild(roleLabel);
+      var textDiv = document.createElement('div');
+      textDiv.appendChild(parseChatText(turn.text));
+      bubble.appendChild(textDiv);
+      var numEl = document.createElement('span');
+      numEl.className = 'turn-num';
+      numEl.textContent = turnCount;
+      div.appendChild(numEl);
+      div.appendChild(bubble);
+      container.appendChild(div);
+    });
+  }
+
+  function renderDimensionRatings(containerId, side) {
+    var container = $(containerId);
+    while (container.firstChild) container.removeChild(container.firstChild);
+    DIMENSIONS.forEach(function(dim, idx) {
+      var qNum = idx + 1;
+      var name = side + '_dim_' + dim.id;
+      var item = document.createElement('div');
+      item.className = 'rating-item';
+      var numSpan = document.createElement('span');
+      numSpan.className = 'q-num';
+      numSpan.textContent = String(qNum);
+      var labelEl = document.createElement('span');
+      labelEl.className = 'q-label';
+      labelEl.appendChild(numSpan);
+      labelEl.appendChild(document.createTextNode(' ' + dim.label));
+      var hintEl = document.createElement('span');
+      hintEl.className = 'q-hint';
+      hintEl.textContent = dim.prompt;
+      var likertDiv = document.createElement('div');
+      likertDiv.className = 'likert';
+      for (var v = 1; v <= 7; v++) {
+        var radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = name;
+        radio.value = String(v);
+        var nEl = document.createElement('span');
+        nEl.className = 'likert-num';
+        nEl.textContent = String(v);
+        var anchorText = LIKERT_ANCHORS[String(v)] || '';
+        var optSpan = document.createElement('span');
+        optSpan.className = 'likert-option';
+        optSpan.appendChild(nEl);
+        if (anchorText) optSpan.appendChild(document.createTextNode(anchorText));
+        var lbl = document.createElement('label');
+        lbl.appendChild(radio);
+        lbl.appendChild(optSpan);
+        likertDiv.appendChild(lbl);
+      }
+      item.appendChild(labelEl);
+      item.appendChild(hintEl);
+      item.appendChild(likertDiv);
+      container.appendChild(item);
+    });
+  }
+
+  function renderConfidenceScale() {
+    var container = $('confidence-scale');
+    while (container.firstChild) container.removeChild(container.firstChild);
+    for (var v = 1; v <= 5; v++) {
+      var radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'confidence';
+      radio.value = String(v);
+      var nEl = document.createElement('span');
+      nEl.className = 'conf-num';
+      nEl.textContent = String(v);
+      var anchorText = CONFIDENCE_LABELS[String(v)] || '';
+      var optSpan = document.createElement('span');
+      optSpan.className = 'conf-option';
+      optSpan.appendChild(nEl);
+      if (anchorText) optSpan.appendChild(document.createTextNode(anchorText));
+      var lbl = document.createElement('label');
+      lbl.appendChild(radio);
+      lbl.appendChild(optSpan);
+      container.appendChild(lbl);
+    }
+  }
+
+  function switchTab(tab) {
+    if (tab === 'a') {
+      $('tab-a').className = 'conv-tab active-a';
+      $('tab-b').className = 'conv-tab';
+      $('chat-display-a').style.display = 'block';
+      $('chat-display-b').style.display = 'none';
+    } else {
+      $('tab-a').className = 'conv-tab';
+      $('tab-b').className = 'conv-tab active-b';
+      $('chat-display-a').style.display = 'none';
+      $('chat-display-b').style.display = 'block';
+    }
+  }
+
+  function validateAll() {
+    var valid = true;
+    var firstError = null;
+    ['a', 'b'].forEach(function(side) {
+      DIMENSIONS.forEach(function(dim) {
+        var name = side + '_dim_' + dim.id;
+        if (!document.querySelector('input[name="' + name + '"]:checked')) {
+          valid = false;
+          if (!firstError) firstError = side === 'a' ? 'ratings-a-section' : 'ratings-b-section';
+        }
+      });
+    });
+    if (!document.querySelector('input[name="forced_choice"]:checked')) { valid = false; if (!firstError) firstError = 'comparison-section'; }
+    if (!document.querySelector('input[name="confidence"]:checked')) { valid = false; if (!firstError) firstError = 'comparison-section'; }
+    if (!document.querySelector('input[name="preference"]:checked')) { valid = false; if (!firstError) firstError = 'overall-section'; }
+    if (!valid && firstError) {
+      var el = $(firstError);
+      if (el) { el.classList.add('validation-error'); el.scrollIntoView({ behavior: 'smooth', block: 'center' }); setTimeout(function() { el.classList.remove('validation-error'); }, 1500); }
+    }
+    return valid;
+  }
+
+  function submitPair() {
+    if (!validateAll()) { showToast('\u05e0\u05d0 \u05dc\u05de\u05dc\u05d0 \u05d0\u05ea \u05db\u05dc \u05d4\u05d3\u05d9\u05e8\u05d5\u05d2\u05d9\u05dd', 'error'); return; }
+    var pair = PAIRS[currentPairIndex];
+    var order = displayOrders[pair.id];
+    var condA = pair[order.a_source].condition;
+    var condB = pair[order.b_source].condition;
+    var data = {
+      action: 'submit_response',
+      expert_id: expertId, expert_name: expertName, expert_role: expertRole, expert_years: expertYears,
+      pair_id: pair.id, pair_index: currentPairIndex + 1,
+      therapist_input_id: pair.therapist_input_id,
+      display_a_condition: condA, display_b_condition: condB,
+      timestamp: new Date().toISOString()
+    };
+    ['a', 'b'].forEach(function(side) {
+      DIMENSIONS.forEach(function(dim) {
+        var name = side + '_dim_' + dim.id;
+        var checked = document.querySelector('input[name="' + name + '"]:checked');
+        data[name] = checked ? parseInt(checked.value) : null;
+      });
+    });
+    var fc = document.querySelector('input[name="forced_choice"]:checked');
+    data.forced_choice_display = fc ? fc.value : null;
+    data.forced_choice_correct = fc ? ((fc.value === 'a' && condA === '33k') || (fc.value === 'b' && condB === '33k') ? 1 : 0) : null;
+    var conf = document.querySelector('input[name="confidence"]:checked');
+    data.confidence = conf ? parseInt(conf.value) : null;
+    data.forced_reasoning = $('forced-reasoning').value.trim();
+    var pref = document.querySelector('input[name="preference"]:checked');
+    data.preference_display = pref ? pref.value : null;
+    data.preference_condition = (pref && pref.value !== 'none') ? (pref.value === 'a' ? condA : condB) : (pref ? 'none' : null);
+    data.overall_comments = $('overall-comments').value.trim();
+    sendToCloud(data);
+    completedPairs[pair.id] = true;
+    showToast('\u05d4\u05d4\u05e2\u05e8\u05db\u05d4 \u05e0\u05e9\u05de\u05e8\u05d4 \u05d1\u05d4\u05e6\u05dc\u05d7\u05d4!', 'success');
+    setTimeout(function() { showScreen('pairs'); }, 800);
+  }
+
+  function sendToCloud(data) {
+    if (!API_URL) { console.log('No API. Data:', JSON.stringify(data, null, 2)); return; }
+    fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(data) })
+      .catch(function(err) { console.error('Save error:', err); });
+  }
+
+  function showToast(msg, type) {
+    var el = $('toast');
+    el.textContent = msg;
+    el.className = 'toast show ' + (type || '');
+    setTimeout(function() { el.className = 'toast'; }, 2500);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

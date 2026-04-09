@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ניהול - הערכת שיחות טיפוליות</title>
+<style>
+  :root { --primary: #2563eb; --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text-light: #64748b; --success: #16a34a; --accent-a: #7c3aed; --accent-b: #0891b2; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+  .header { background: linear-gradient(135deg, #1e3a5f, #2563eb); color: white; padding: 20px; text-align: center; border-radius: 12px; margin-bottom: 20px; }
+  .header h1 { font-size: 1.4rem; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  h2 { font-size: 1.15rem; margin-bottom: 12px; }
+  .btn { padding: 8px 20px; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-danger { background: #dc2626; color: white; }
+  .btn-sm { padding: 4px 12px; font-size: 0.8rem; }
+  .btn:hover { opacity: 0.9; }
+  .setup { text-align: center; padding: 40px; }
+  .setup input { padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; width: 100%; max-width: 500px; margin: 12px auto; display: block; direction: ltr; text-align: center; }
+  .setup input:focus { outline: none; border-color: var(--primary); }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .stat-card { background: var(--bg); border-radius: 8px; padding: 14px; text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 700; color: var(--primary); }
+  .stat-label { font-size: 0.8rem; color: var(--text-light); }
+  .add-expert { display: flex; gap: 8px; margin-bottom: 16px; }
+  .add-expert input { flex: 1; padding: 10px 14px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.95rem; direction: rtl; }
+  .add-expert input:focus { outline: none; border-color: var(--primary); }
+  .expert-list { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .expert-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: wrap; }
+  .expert-row:last-child { border-bottom: none; }
+  .expert-row:hover { background: #f8fafc; }
+  .expert-id { background: var(--primary); color: white; border-radius: 6px; padding: 2px 10px; font-weight: 700; font-size: 0.85rem; min-width: 36px; text-align: center; }
+  .expert-name { font-weight: 600; flex-shrink: 0; }
+  .expert-link { flex: 1; font-size: 0.8rem; color: var(--text-light); direction: ltr; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 200px; }
+  .expert-status { font-size: 0.8rem; font-weight: 600; padding: 2px 10px; border-radius: 12px; }
+  .status-done { background: #dcfce7; color: #166534; }
+  .status-partial { background: #fef9c3; color: #854d0e; }
+  .status-new { background: #f1f5f9; color: var(--text-light); }
+  .expert-actions { display: flex; gap: 6px; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  th { background: #f1f5f9; padding: 8px 6px; text-align: center; font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  td { padding: 6px; text-align: center; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: #f8fafc; }
+  .table-wrap { overflow-x: auto; margin-top: 12px; }
+  th.col-a { background: #f5f3ff; color: var(--accent-a); }
+  th.col-b { background: #ecfeff; color: var(--accent-b); }
+  th.col-comp { background: #fffbeb; color: #d97706; }
+  .loading { text-align: center; padding: 40px; color: var(--text-light); }
+  .filter-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+  .filter-bar select { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; }
+  .empty-msg { text-align: center; padding: 24px; color: var(--text-light); font-size: 0.9rem; }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+  .modal { background: white; border-radius: 12px; padding: 24px; max-width: 400px; width: 90%; text-align: center; }
+  .modal h3 { margin-bottom: 8px; color: #dc2626; }
+  .modal p { color: var(--text-light); font-size: 0.9rem; margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: center; }
+  .delete-row-btn { cursor: pointer; color: #dc2626; font-weight: 700; font-size: 1.1rem; background: none; border: none; padding: 0 4px; }
+  .delete-row-btn:hover { color: #991b1b; }
+  .icc-section { margin-top: 16px; padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border); }
+  .icc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .icc-item { padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid var(--border); font-size: 0.85rem; }
+  .icc-item .dim-name { font-weight: 600; display: block; }
+  .icc-item .icc-val { font-size: 1.1rem; font-weight: 700; }
+  .icc-good { color: var(--success); }
+  .icc-moderate { color: #d97706; }
+  .icc-poor { color: #dc2626; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header"><h1>ניהול - הערכת שיחות טיפוליות (מחקר דחיסת פרומפט)</h1></div>
+
+  <div id="setup-screen" class="card setup" style="display:none;">
+    <h2>הגדרת חיבור</h2>
+    <p style="color:var(--text-light);">הזינו את כתובת ה-API של Google Apps Script</p>
+    <input type="text" id="api-input" placeholder="https://script.google.com/macros/s/.../exec" dir="ltr">
+    <button class="btn btn-primary" id="btn-connect">התחבר</button>
+  </div>
+
+  <div id="main-screen" style="display:none;">
+    <div class="card" style="background: #eff6ff; border-color: #bfdbfe;">
+      <details>
+        <summary style="cursor:pointer; font-weight:600; font-size:1rem; color:var(--primary);">הוראות שימוש</summary>
+        <div style="margin-top:12px; font-size:0.9rem; line-height:1.8; color:var(--text);">
+          <p><strong>הוספת מומחה:</strong> הזינו שם בשדה למטה ולחצו "הוסף מומחה". המומחה מקבל מספר זיהוי וקישור אישי.</p>
+          <p><strong>שליחת קישור:</strong> לחצו "העתק קישור" ליד שם המומחה ושלחו לו.</p>
+          <p><strong>מעקב התקדמות:</strong> ליד כל מומחה מוצג סטטוס. הנתונים מתעדכנים בלחיצה על "רענן נתונים".</p>
+          <p><strong>ICC:</strong> כשיש 2+ מומחים שהעריכו את אותו זוג, מוצג אומדן ICC לכל ממד.</p>
+          <p><strong>ייצוא:</strong> "הורד CSV" מוריד את כל הנתונים בפורמט מוכן ל-R.</p>
+        </div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h2>סיכום</h2>
+      <div class="stats-grid" id="stats-grid"></div>
+    </div>
+
+    <div class="card">
+      <h2>מומחים</h2>
+      <div class="add-expert">
+        <input type="text" id="new-expert-name" placeholder="שם המומחה/ית החדש/ה">
+        <button class="btn btn-primary" id="btn-add-expert">הוסף מומחה</button>
+      </div>
+      <div id="expert-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>נתונים</h2>
+      <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <button class="btn btn-success" id="btn-download">הורד CSV</button>
+        <button class="btn btn-primary" id="btn-refresh">רענן נתונים</button>
+        <button class="btn btn-danger" id="btn-delete-all">מחק את כל הנתונים</button>
+      </div>
+      <div class="filter-bar">
+        <span>סנן לפי מומחה:</span>
+        <select id="filter-expert"><option value="">הכל</option></select>
+        <span>סנן לפי זוג:</span>
+        <select id="filter-pair"><option value="">הכל</option></select>
+      </div>
+      <div class="table-wrap" id="table-wrap"></div>
+    </div>
+
+    <div class="card" id="icc-card" style="display:none;">
+      <h2>מהימנות בין שופטים (ICC)</h2>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:12px;">ICC(2,1) - Two-way random, absolute agreement. מחושב כאשר 2+ מומחים העריכו את אותו זוג.</p>
+      <div class="icc-section" id="icc-content"></div>
+    </div>
+  </div>
+
+  <div id="loading" class="loading">טוען נתונים...</div>
+</div>
+
+<div id="confirm-modal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <h3 id="modal-title">אישור מחיקה</h3>
+    <p id="modal-msg"></p>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="modal-confirm">מחק</button>
+      <button class="btn" id="modal-cancel" style="border:1px solid var(--border);">ביטול</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var DIMENSIONS = [
+    'clinical_authenticity', 'therapeutic_responsiveness', 'nonlinear_progression',
+    'character_consistency', 'hebrew_naturalness', 'training_utility', 'body_language_quality'
+  ];
+  var DIM_LABELS = {
+    'clinical_authenticity': 'אותנטיות',
+    'therapeutic_responsiveness': 'היענות',
+    'nonlinear_progression': 'לא-ליניאריות',
+    'character_consistency': 'עקביות',
+    'hebrew_naturalness': 'עברית',
+    'training_utility': 'תועלת',
+    'body_language_quality': 'שפת גוף'
+  };
+
+  var apiUrl = '';
+  var allData = [];
+  var experts = [];
+  var totalPairs = 5;
+
+  function $(id) { return document.getElementById(id); }
+
+  function init() {
+    var params = new URLSearchParams(window.location.search);
+    apiUrl = params.get('api') || localStorage.getItem('compression-eval-admin-api') || '';
+
+    $('btn-connect').addEventListener('click', function() {
+      apiUrl = $('api-input').value.trim();
+      if (apiUrl) { localStorage.setItem('compression-eval-admin-api', apiUrl); loadAll(); }
+    });
+    $('btn-download').addEventListener('click', downloadCSV);
+    $('btn-refresh').addEventListener('click', loadAll);
+    $('btn-add-expert').addEventListener('click', addExpert);
+    $('btn-delete-all').addEventListener('click', deleteAllData);
+    $('filter-expert').addEventListener('change', renderTable);
+    $('filter-pair').addEventListener('change', renderTable);
+    $('new-expert-name').addEventListener('keydown', function(e) { if (e.key === 'Enter') addExpert(); });
+    $('api-input').addEventListener('keydown', function(e) { if (e.key === 'Enter') { apiUrl = $('api-input').value.trim(); if (apiUrl) { localStorage.setItem('compression-eval-admin-api', apiUrl); loadAll(); } } });
+
+    if (apiUrl) { loadAll(); } else { $('loading').style.display = 'none'; $('setup-screen').style.display = 'block'; }
+  }
+
+  function loadAll() {
+    $('loading').style.display = 'block';
+    $('setup-screen').style.display = 'none';
+    $('main-screen').style.display = 'none';
+    Promise.all([
+      fetch(apiUrl + '?action=experts').then(function(r) { return r.json(); }),
+      fetch(apiUrl).then(function(r) { return r.json(); })
+    ]).then(function(results) {
+      experts = (results[0] && results[0].experts) || [];
+      allData = (results[1] && results[1].rows) || [];
+      // Detect total pairs from data
+      var pairIds = {};
+      allData.forEach(function(r) { if (r.pair_id) pairIds[r.pair_id] = true; });
+      var pairCount = Object.keys(pairIds).length;
+      if (pairCount > totalPairs) totalPairs = pairCount;
+      $('loading').style.display = 'none';
+      $('main-screen').style.display = 'block';
+      renderAll();
+    }).catch(function() {
+      $('loading').style.display = 'none';
+      $('setup-screen').style.display = 'block';
+      $('api-input').value = apiUrl;
+    });
+  }
+
+  function addExpert() {
+    var name = $('new-expert-name').value.trim();
+    if (!name) return;
+    $('btn-add-expert').disabled = true;
+    $('btn-add-expert').textContent = 'שומר...';
+    fetch(apiUrl, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'register_expert', name: name })
+    }).then(function() {
+      $('new-expert-name').value = '';
+      return fetch(apiUrl + '?action=experts');
+    }).then(function(r) { return r.json(); }).then(function(res) {
+      experts = (res && res.experts) || [];
+      $('btn-add-expert').disabled = false;
+      $('btn-add-expert').textContent = 'הוסף מומחה';
+      renderAll();
+    }).catch(function() {
+      $('btn-add-expert').disabled = false;
+      $('btn-add-expert').textContent = 'הוסף מומחה';
+      loadAll();
+    });
+  }
+
+  function getExpertBaseUrl() {
+    return window.location.origin + window.location.pathname.replace('admin.html', 'index.html') + '?api=' + encodeURIComponent(apiUrl);
+  }
+
+  function getExpertPairs(expertId) {
+    var pairs = [];
+    allData.forEach(function(row) {
+      if (String(row.expert_id) === String(expertId) && row.pair_id) {
+        if (pairs.indexOf(row.pair_id) === -1) pairs.push(row.pair_id);
+      }
+    });
+    return pairs;
+  }
+
+  function copyToClipboard(text, btn) {
+    navigator.clipboard.writeText(text).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch(e) {}
+      document.body.removeChild(ta);
+    });
+    var orig = btn.textContent;
+    btn.textContent = 'הועתק!';
+    setTimeout(function() { btn.textContent = orig; }, 1500);
+  }
+
+  var modalCallback = null;
+  function showConfirm(title, msg, onConfirm) {
+    $('modal-title').textContent = title;
+    $('modal-msg').textContent = msg;
+    $('confirm-modal').style.display = 'flex';
+    modalCallback = onConfirm;
+  }
+  $('modal-confirm').addEventListener('click', function() {
+    $('confirm-modal').style.display = 'none';
+    if (modalCallback) modalCallback();
+    modalCallback = null;
+  });
+  $('modal-cancel').addEventListener('click', function() {
+    $('confirm-modal').style.display = 'none';
+    modalCallback = null;
+  });
+
+  function postAndReload(body) {
+    fetch(apiUrl, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(body) })
+      .then(function() { setTimeout(loadAll, 1500); });
+  }
+
+  function deleteExpert(id, name) {
+    showConfirm('מחיקת מומחה', 'למחוק את המומחה "' + name + '"? פעולה זו בלתי הפיכה.', function() {
+      postAndReload({ action: 'delete_expert', id: id });
+    });
+  }
+
+  function deleteResponse(expertId, expertName, pairId) {
+    showConfirm('מחיקת שורה', 'למחוק את ההערכה של "' + expertName + '" על זוג ' + pairId + '?', function() {
+      postAndReload({ action: 'delete_response', expert_id: expertId, pair_id: pairId });
+    });
+  }
+
+  function deleteAllData() {
+    showConfirm('מחיקת כל הנתונים', 'כל ההערכות של כל המומחים יימחקו לצמיתות. בטוחים?', function() {
+      postAndReload({ action: 'clear_responses' });
+    });
+  }
+
+  function renderAll() {
+    renderStats();
+    renderExperts();
+    renderFilters();
+    renderTable();
+    renderICC();
+  }
+
+  function renderStats() {
+    var grid = $('stats-grid');
+    while (grid.firstChild) grid.removeChild(grid.firstChild);
+    var completedExperts = experts.filter(function(ex) { return getExpertPairs(ex.id).length >= totalPairs; }).length;
+    var correctGuesses = allData.filter(function(r) { return r.forced_choice_correct === 1; }).length;
+    var totalGuesses = allData.filter(function(r) { return r.forced_choice_correct !== null && r.forced_choice_correct !== undefined; }).length;
+    var guessRate = totalGuesses > 0 ? Math.round(correctGuesses / totalGuesses * 100) : 0;
+    [
+      { num: experts.length, label: 'מומחים רשומים' },
+      { num: allData.length, label: 'הערכות זוגות' },
+      { num: completedExperts, label: 'השלימו הכל' },
+      { num: guessRate + '%', label: 'זיהוי 33k נכון' }
+    ].forEach(function(s) {
+      var card = document.createElement('div'); card.className = 'stat-card';
+      var n = document.createElement('div'); n.className = 'stat-num'; n.textContent = s.num;
+      var l = document.createElement('div'); l.className = 'stat-label'; l.textContent = s.label;
+      card.appendChild(n); card.appendChild(l); grid.appendChild(card);
+    });
+  }
+
+  function renderExperts() {
+    var list = $('expert-list');
+    while (list.firstChild) list.removeChild(list.firstChild);
+    if (experts.length === 0) {
+      var msg = document.createElement('div'); msg.className = 'empty-msg';
+      msg.textContent = 'טרם נרשמו מומחים. הוסיפו מומחה למעלה.';
+      list.appendChild(msg);
+      return;
+    }
+    var baseUrl = getExpertBaseUrl();
+    experts.forEach(function(ex) {
+      var pairs = getExpertPairs(ex.id);
+      var link = baseUrl + '&expert=' + ex.id;
+      var row = document.createElement('div'); row.className = 'expert-row';
+      var idEl = document.createElement('span'); idEl.className = 'expert-id'; idEl.textContent = ex.id;
+      var nameEl = document.createElement('span'); nameEl.className = 'expert-name'; nameEl.textContent = ex.name;
+      var statusEl = document.createElement('span');
+      if (pairs.length >= totalPairs) { statusEl.className = 'expert-status status-done'; statusEl.textContent = pairs.length + '/' + totalPairs; }
+      else if (pairs.length > 0) { statusEl.className = 'expert-status status-partial'; statusEl.textContent = pairs.length + '/' + totalPairs; }
+      else { statusEl.className = 'expert-status status-new'; statusEl.textContent = 'חדש'; }
+      var linkEl = document.createElement('span'); linkEl.className = 'expert-link'; linkEl.textContent = link;
+      var actionsEl = document.createElement('span'); actionsEl.className = 'expert-actions';
+      var copyBtn = document.createElement('button'); copyBtn.className = 'btn btn-primary btn-sm'; copyBtn.textContent = 'העתק קישור';
+      copyBtn.addEventListener('click', (function(l, b) { return function() { copyToClipboard(l, b); }; })(link, copyBtn));
+      actionsEl.appendChild(copyBtn);
+      var delBtn = document.createElement('button'); delBtn.className = 'btn btn-danger btn-sm'; delBtn.textContent = 'מחק';
+      delBtn.addEventListener('click', (function(eid, ename) { return function() { deleteExpert(eid, ename); }; })(ex.id, ex.name));
+      actionsEl.appendChild(delBtn);
+      row.appendChild(idEl); row.appendChild(nameEl); row.appendChild(statusEl); row.appendChild(linkEl); row.appendChild(actionsEl);
+      list.appendChild(row);
+    });
+  }
+
+  function renderFilters() {
+    var fe = $('filter-expert');
+    while (fe.options.length > 1) fe.remove(1);
+    experts.forEach(function(ex) {
+      var opt = document.createElement('option'); opt.value = String(ex.id); opt.textContent = ex.name;
+      fe.appendChild(opt);
+    });
+    var fp = $('filter-pair');
+    while (fp.options.length > 1) fp.remove(1);
+    var pairIds = {};
+    allData.forEach(function(r) { if (r.pair_id) pairIds[r.pair_id] = true; });
+    Object.keys(pairIds).sort().forEach(function(pid) {
+      var opt = document.createElement('option'); opt.value = pid; opt.textContent = pid;
+      fp.appendChild(opt);
+    });
+  }
+
+  function renderTable() {
+    var wrap = $('table-wrap');
+    while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+    var ef = $('filter-expert').value;
+    var pf = $('filter-pair').value;
+    var filtered = allData.filter(function(row) {
+      if (ef && String(row.expert_id) !== ef) return false;
+      if (pf && String(row.pair_id) !== pf) return false;
+      return true;
+    });
+    if (filtered.length === 0) {
+      var p = document.createElement('p'); p.className = 'empty-msg'; p.textContent = 'אין נתונים להצגה';
+      wrap.appendChild(p); return;
+    }
+    var table = document.createElement('table');
+    var thead = document.createElement('thead');
+    var hr = document.createElement('tr');
+    var cols = [
+      {k:'expert_name',l:'מומחה',c:''},
+      {k:'pair_id',l:'זוג',c:''}
+    ];
+    // A dimensions
+    DIMENSIONS.forEach(function(d) { cols.push({k:'a_dim_'+d, l:'א-'+DIM_LABELS[d], c:'col-a'}); });
+    // B dimensions
+    DIMENSIONS.forEach(function(d) { cols.push({k:'b_dim_'+d, l:'ב-'+DIM_LABELS[d], c:'col-b'}); });
+    // Comparison
+    cols.push({k:'forced_choice_display',l:'בחירה',c:'col-comp'});
+    cols.push({k:'forced_choice_correct',l:'נכון?',c:'col-comp'});
+    cols.push({k:'confidence',l:'ביטחון',c:'col-comp'});
+    cols.push({k:'preference_display',l:'העדפה',c:'col-comp'});
+
+    var thDel = document.createElement('th'); thDel.textContent = ''; hr.appendChild(thDel);
+    cols.forEach(function(col) {
+      var th = document.createElement('th'); th.textContent = col.l; if (col.c) th.className = col.c; hr.appendChild(th);
+    });
+    thead.appendChild(hr); table.appendChild(thead);
+
+    var tbody = document.createElement('tbody');
+    filtered.forEach(function(row) {
+      var tr = document.createElement('tr');
+      var tdDel = document.createElement('td');
+      var delBtn = document.createElement('button'); delBtn.className = 'delete-row-btn'; delBtn.textContent = '\u00D7';
+      delBtn.title = 'מחק שורה';
+      delBtn.addEventListener('click', (function(r) { return function() {
+        deleteResponse(r.expert_id, r.expert_name, r.pair_id);
+      }; })(row));
+      tdDel.appendChild(delBtn);
+      tr.appendChild(tdDel);
+      cols.forEach(function(col) {
+        var td = document.createElement('td');
+        var val = row[col.k];
+        td.textContent = val !== undefined && val !== null ? val : '';
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody); wrap.appendChild(table);
+  }
+
+  // Simple ICC(2,1) approximation
+  function renderICC() {
+    var iccCard = $('icc-card');
+    var content = $('icc-content');
+    while (content.firstChild) content.removeChild(content.firstChild);
+
+    // Group data by pair_id
+    var byPair = {};
+    allData.forEach(function(r) {
+      if (!r.pair_id) return;
+      if (!byPair[r.pair_id]) byPair[r.pair_id] = [];
+      byPair[r.pair_id].push(r);
+    });
+
+    // Find pairs with 2+ raters
+    var multiRaterPairs = Object.keys(byPair).filter(function(pid) { return byPair[pid].length >= 2; });
+    if (multiRaterPairs.length === 0) {
+      iccCard.style.display = 'none';
+      return;
+    }
+    iccCard.style.display = 'block';
+
+    // For each dimension (across both A and B), compute simple ICC
+    var allDimKeys = [];
+    ['a', 'b'].forEach(function(side) {
+      DIMENSIONS.forEach(function(d) {
+        allDimKeys.push({ key: side + '_dim_' + d, label: (side === 'a' ? "א'" : "ב'") + ' - ' + DIM_LABELS[d] });
+      });
+    });
+
+    var iccGrid = document.createElement('div');
+    iccGrid.className = 'icc-grid';
+
+    allDimKeys.forEach(function(dimInfo) {
+      // Collect ratings: rows of [rater1_val, rater2_val, ...]
+      var ratings = [];
+      multiRaterPairs.forEach(function(pid) {
+        var raters = byPair[pid];
+        var vals = raters.map(function(r) { return r[dimInfo.key]; }).filter(function(v) { return v !== null && v !== undefined; });
+        if (vals.length >= 2) ratings.push(vals);
+      });
+
+      if (ratings.length === 0) return;
+
+      // Simple ICC approximation: 1 - (within-variance / total-variance)
+      var allVals = [];
+      var withinVar = 0;
+      ratings.forEach(function(group) {
+        var mean = group.reduce(function(s,v){return s+v;},0) / group.length;
+        group.forEach(function(v) {
+          withinVar += (v - mean) * (v - mean);
+          allVals.push(v);
+        });
+      });
+      if (allVals.length < 2) return;
+      var grandMean = allVals.reduce(function(s,v){return s+v;},0) / allVals.length;
+      var totalVar = allVals.reduce(function(s,v){return s + (v-grandMean)*(v-grandMean);},0);
+
+      var icc = totalVar > 0 ? 1 - (withinVar / totalVar) : 1;
+      icc = Math.max(0, Math.min(1, icc));
+
+      var item = document.createElement('div');
+      item.className = 'icc-item';
+      var nameEl = document.createElement('span');
+      nameEl.className = 'dim-name';
+      nameEl.textContent = dimInfo.label;
+      var valEl = document.createElement('span');
+      valEl.className = 'icc-val ' + (icc >= 0.6 ? 'icc-good' : icc >= 0.4 ? 'icc-moderate' : 'icc-poor');
+      valEl.textContent = icc.toFixed(2);
+      item.appendChild(nameEl);
+      item.appendChild(valEl);
+      iccGrid.appendChild(item);
+    });
+
+    content.appendChild(iccGrid);
+  }
+
+  function downloadCSV() {
+    if (allData.length === 0) return;
+    var headers = ['expert_id','expert_name','expert_role','expert_years','pair_id','pair_index','therapist_input_id',
+      'display_a_condition','display_b_condition','timestamp'];
+    ['a','b'].forEach(function(side) {
+      DIMENSIONS.forEach(function(d) { headers.push(side + '_dim_' + d); });
+    });
+    headers.push('forced_choice_display','forced_choice_correct','confidence','forced_reasoning',
+      'preference_display','preference_condition','overall_comments');
+
+    var rows = [headers.join(',')];
+    allData.forEach(function(row) {
+      var vals = headers.map(function(h) {
+        var v = row[h]; if (v === null || v === undefined) return '';
+        v = String(v);
+        if (v.indexOf(',')>-1||v.indexOf('"')>-1||v.indexOf('\n')>-1) v = '"'+v.replace(/"/g,'""')+'"';
+        return v;
+      });
+      rows.push(vals.join(','));
+    });
+    var blob = new Blob(['\ufeff'+rows.join('\n')], {type:'text/csv;charset=utf-8'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url;
+    a.download = 'compression_eval_' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
