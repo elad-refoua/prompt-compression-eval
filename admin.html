@@ -167,7 +167,7 @@
   var apiUrl = 'https://script.google.com/macros/s/AKfycbwx8XEpdzB7nzhTwupbO9sfHCSCJCzerr0XIN3oWJSHJM35VYGHMb_aRDEs1c8RSuNd/exec';
   var allData = [];
   var experts = [];
-  var totalPairs = 5;
+  var totalPairs = 10;
 
   function $(id) { return document.getElementById(id); }
 
@@ -227,6 +227,9 @@
       body: JSON.stringify({ action: 'register_expert', name: name })
     }).then(function() {
       $('new-expert-name').value = '';
+      // Wait 2s for Apps Script write to propagate before reading
+      return new Promise(function(resolve) { setTimeout(resolve, 2000); });
+    }).then(function() {
       return fetch(apiUrl + '?action=experts');
     }).then(function(r) { return r.json(); }).then(function(res) {
       experts = (res && res.experts) || [];
