@@ -173,7 +173,7 @@
 
   function init() {
     var params = new URLSearchParams(window.location.search);
-    apiUrl = params.get('api') || localStorage.getItem('compression-eval-admin-api') || '';
+    apiUrl = params.get('api') || localStorage.getItem('compression-eval-admin-api') || 'https://script.google.com/macros/s/AKfycbwx8XEpdzB7nzhTwupbO9sfHCSCJCzerr0XIN3oWJSHJM35VYGHMb_aRDEs1c8RSuNd/exec';
 
     $('btn-connect').addEventListener('click', function() {
       apiUrl = $('api-input').value.trim();
