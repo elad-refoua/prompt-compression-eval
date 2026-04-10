@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>Recruitment Flyer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&family=Heebo:wght@300;400;500;700&display=swap');
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    width: 800px;
+    height: 1200px;
+    font-family: 'Heebo', sans-serif;
+    background: #F5EFE6;
+    color: #2C3E50;
+    overflow: hidden;
+  }
+  .flyer {
+    width: 800px;
+    height: 1200px;
+    padding: 80px 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    background:
+      radial-gradient(ellipse at top left, rgba(107, 142, 127, 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, rgba(201, 166, 107, 0.08) 0%, transparent 50%),
+      #F5EFE6;
+  }
+  .top-accent {
+    width: 80px;
+    height: 4px;
+    background: #6B8E7F;
+    margin-bottom: 30px;
+  }
+  .eyebrow {
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: #6B8E7F;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  h1 {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.05;
+    color: #2C3E50;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+  }
+  h1 .accent {
+    color: #6B8E7F;
+  }
+  .subtitle {
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: #5a6b7a;
+    line-height: 1.3;
+    margin-bottom: 50px;
+  }
+  .illustration {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  .chair-scene {
+    width: 280px;
+    height: 260px;
+    position: relative;
+  }
+  .chair-scene svg {
+    width: 100%;
+    height: 100%;
+  }
+  .body-text {
+    font-family: 'Heebo', sans-serif;
+    font-size: 19px;
+    line-height: 1.9;
+    color: #3a4a5a;
+    text-align: right;
+    margin-bottom: 35px;
+  }
+  .body-text strong {
+    color: #2C3E50;
+    font-weight: 700;
+  }
+  .highlights {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 35px;
+  }
+  .highlights li {
+    font-family: 'Heebo', sans-serif;
+    font-size: 19px;
+    color: #3a4a5a;
+    padding: 10px 0;
+    border-top: 1px solid rgba(107, 142, 127, 0.25);
+    position: relative;
+  }
+  .highlights li:last-child {
+    border-bottom: 1px solid rgba(107, 142, 127, 0.25);
+  }
+  .highlights .number {
+    color: #6B8E7F;
+    font-weight: 700;
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 22px;
+    margin-left: 10px;
+  }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 20px;
+  }
+  .contact {
+    font-family: 'Heebo', sans-serif;
+    font-size: 16px;
+    color: #5a6b7a;
+    line-height: 1.6;
+  }
+  .contact strong {
+    color: #2C3E50;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .institution {
+    text-align: left;
+    font-family: 'Frank Ruhl Libre', serif;
+    font-size: 14px;
+    color: #6B8E7F;
+    line-height: 1.4;
+    letter-spacing: 0.5px;
+  }
+  .institution .bar {
+    display: block;
+    width: 50px;
+    height: 2px;
+    background: #6B8E7F;
+    margin-bottom: 10px;
+    margin-right: auto;
+  }
+</style>
+</head>
+<body>
+<div class="flyer">
+
+  <div>
+    <div class="top-accent"></div>
+    <div class="eyebrow">מחקר אקדמי · הזמנה להשתתפות</div>
+    <h1>הכירו את עולם<br>הסימולציות <span class="accent">הטיפוליות</span></h1>
+    <div class="subtitle">קריאה לפסיכולוגים/ות קליניים/ות<br>מומחים/ות בישראל</div>
+  </div>
+
+  <div class="illustration">
+    <div class="chair-scene">
+      <svg viewBox="0 0 280 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- warm lamp glow -->
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="40%" r="50%">
+            <stop offset="0%" stop-color="#F5D99A" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#F5D99A" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="140" cy="105" r="110" fill="url(#glow)"/>
+
+        <!-- lamp -->
+        <line x1="200" y1="20" x2="200" y2="75" stroke="#2C3E50" stroke-width="2"/>
+        <path d="M 180 75 Q 200 95 220 75 L 215 80 Q 200 92 185 80 Z" fill="#6B8E7F" stroke="#2C3E50" stroke-width="2"/>
+        <circle cx="200" cy="85" r="3" fill="#F5D99A"/>
+
+        <!-- therapy chair -->
+        <g stroke="#2C3E50" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <!-- chair back -->
+          <path d="M 80 110 L 80 180 Q 80 190 90 190 L 160 190 Q 170 190 170 180 L 170 110"/>
+          <!-- chair cushion -->
+          <path d="M 75 180 L 175 180 L 175 200 L 75 200 Z" fill="#E8DCC0"/>
+          <!-- chair legs -->
+          <line x1="85" y1="200" x2="80" y2="240"/>
+          <line x1="165" y1="200" x2="170" y2="240"/>
+          <!-- chair arms -->
+          <path d="M 70 145 Q 60 145 60 155 L 60 195 L 75 195"/>
+          <path d="M 180 145 Q 190 145 190 155 L 190 195 L 175 195"/>
+        </g>
+
+        <!-- notebook on floor -->
+        <g stroke="#2C3E50" stroke-width="2" fill="#F5EFE6" stroke-linejoin="round">
+          <rect x="30" y="225" width="40" height="28" rx="2"/>
+          <line x1="35" y1="232" x2="65" y2="232" stroke="#6B8E7F" stroke-width="1"/>
+          <line x1="35" y1="238" x2="60" y2="238" stroke="#6B8E7F" stroke-width="1"/>
+          <line x1="35" y1="244" x2="63" y2="244" stroke="#6B8E7F" stroke-width="1"/>
+        </g>
+
+        <!-- subtle floor line -->
+        <line x1="10" y1="253" x2="270" y2="253" stroke="#6B8E7F" stroke-width="1" stroke-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <div>
+    <p class="body-text">
+      מחקר אמפירי חדש הבוחן <strong>כמה פרומפט באמת נחוץ</strong> כדי שסימולציה טיפולית תרגיש אותנטית.
+      התוצאות ישפיעו על עתיד ההכשרה הקלינית בישראל ובעולם.
+    </p>
+
+    <ul class="highlights">
+      <li><span class="number">10</span>זוגות שיחות טיפוליות להערכה עיוורת</li>
+      <li><span class="number">2-4</span>שעות · מהבית · בקצב שלכם/ן</li>
+      <li><span class="number">JMIR</span>הכרה במאמר שיפורסם</li>
+    </ul>
+
+    <div class="footer">
+      <div class="contact">
+        <strong>אלעד רפואה</strong>
+        elarefoua@gmail.com
+      </div>
+      <div class="institution">
+        <span class="bar"></span>
+        אוניברסיטת<br>בר-אילן
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
