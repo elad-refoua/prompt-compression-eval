@@ -166,11 +166,11 @@
     <div class="card">
       <h2>ברוכים הבאים</h2>
       <div style="font-size:0.9rem; line-height:1.8; color:var(--text); margin-bottom:20px;">
-        <p>במחקר זה אנו בוחנים את איכות שיחות טיפוליות עם פרסונה בשם <strong>שרה</strong> — מורה בת 38 הסובלת מדיכאון — שנוצרו באמצעות בינה מלאכותית בשני תנאים שונים.</p>
+        <p>במחקר זה אנו בוחנים את איכות שיחות טיפוליות סימולטיביות שנוצרו באמצעות בינה מלאכותית בשני תנאים שונים. הפרסונה המוצגת היא <strong>שרה</strong>, מטופלת שתוכננה לתרגול מיומנויות טיפוליות.</p>
         <p style="margin-top:8px;">תתבקשו להעריך <strong>10 זוגות של שיחות</strong>. בכל זוג שתי שיחות עם אותו קלט ראשוני של מטפל/ת, בשתי הגישות השונות שאנו משווים.</p>
-        <p style="margin-top:8px;">לכל שיחה תדרגו 7 ממדים קליניים בסולם 1-7, ואז תתבקשו להשוות בין שתי השיחות ולנחש איזו מהן נוצרה באיזה תנאי.</p>
+        <p style="margin-top:8px;">לכל שיחה תדרגו 8 ממדים קליניים בסולם 1-7, ואז תתבקשו להשוות בין שתי השיחות ולנחש איזו מהן נוצרה באיזה תנאי.</p>
         <p style="margin-top:8px;">זמן משוער: 2-4 שעות בסה"כ (ניתן לעצור ולהמשיך). השתתפות התנדבותית. תודה אישית בעבודה המפורסמת.</p>
-        <p style="margin-top:8px;"><strong>אוכלוסיית יעד:</strong> פסיכולוגים/ות קליניים/ות מומחים/ות בישראל.</p>
+        <p style="margin-top:8px;"><strong>אוכלוסיית יעד:</strong> פסיכולוגים/ות קליניים/ות מומחים/ות ומטפלים/ות בעלי/ות ניסיון בישראל - מכל גישה טיפולית.</p>
       </div>
       <div class="welcome-form">
         <div class="form-group">
@@ -229,14 +229,12 @@
           </select>
         </div>
         <div class="form-group">
-          <label for="expert-depression-exp">ניסיון בטיפול בדיכאון</label>
-          <select id="expert-depression-exp">
+          <label for="expert-clinical-exp">ניסיון עם מקרים קליניים מורכבים</label>
+          <select id="expert-clinical-exp">
             <option value="">בחרו...</option>
-            <option value="primary">תחום מומחיות עיקרי</option>
-            <option value="frequent">מטפל/ת בדיכאון באופן קבוע</option>
-            <option value="occasional">מטפל/ת בדיכאון מדי פעם</option>
-            <option value="rare">ניסיון מועט</option>
-            <option value="none">ללא ניסיון ישיר</option>
+            <option value="extensive">ניסיון נרחב</option>
+            <option value="moderate">ניסיון בינוני</option>
+            <option value="limited">ניסיון מוגבל</option>
           </select>
         </div>
         <div class="form-group">
@@ -290,7 +288,7 @@
     </div>
     <a class="back-link" id="btn-back-pairs">&#8592; חזרה לרשימת הזוגות</a>
     <div class="instructions">
-      <strong>הנחיות:</strong> בכל זוג תראו שתי שיחות עם <strong>שרה</strong> — מורה בת 38 הסובלת מדיכאון. בשתי השיחות המטפל/ת הוא באותה רמת מיומנות, אך השיחות נוצרו בתנאים שונים. <strong>שימו לב לדמות של שרה</strong> — עד כמה היא מרגישה אמיתית, עקבית, ומגיבה בהתאם לגישת המטפל/ת. קראו כל שיחה בעיון, דרגו אותה ב-7 ממדים, ואז השוו בין השתיים.
+      <strong>הנחיות:</strong> בכל זוג תראו שתי שיחות עם <strong>שרה</strong> — מטופלת שתוכננה לתרגול מיומנויות טיפוליות. בשתי השיחות המטפל/ת הוא באותה רמת מיומנות, אך השיחות נוצרו בתנאים שונים. <strong>שימו לב לדמות של שרה</strong> — עד כמה היא מרגישה אמיתית, עקבית, ומגיבה בהתאם לגישת המטפל/ת. קראו כל שיחה בעיון, דרגו אותה ב-8 ממדים, ואז השוו בין השתיים.
     </div>
     <div class="conv-tabs" id="conv-tabs">
       <button class="conv-tab active-a" id="tab-a">שיחה א'</button>
@@ -300,12 +298,12 @@
     <div id="chat-display-b" class="chat-container border-b" style="display:none;"></div>
     <div class="rating-section section-a" id="ratings-a-section">
       <h3>דירוג שיחה א'</h3>
-      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה א' ב-7 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה א' ב-8 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
       <div id="ratings-a"></div>
     </div>
     <div class="rating-section section-b" id="ratings-b-section">
       <h3>דירוג שיחה ב'</h3>
-      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה ב' ב-7 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה ב' ב-8 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
       <div id="ratings-b"></div>
     </div>
     <div class="rating-section section-comparison" id="comparison-section">
@@ -532,7 +530,7 @@
     var years = $('expert-years').value;
     var yearsPost = $('expert-years-post').value;
     var approach = $('expert-approach').value;
-    var depressionExp = $('expert-depression-exp').value;
+    var clinicalExp = $('expert-clinical-exp').value;
     var supervision = $('expert-supervision').value;
     var returning = $('returning-select').value;
     if (returning) {
@@ -552,8 +550,8 @@
     $('expert-years-post').classList.remove('validation-error');
     if (!approach) { $('expert-approach').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05d2\u05d9\u05e9\u05d4 \u05d8\u05d9\u05e4\u05d5\u05dc\u05d9\u05ea', 'error'); return; }
     $('expert-approach').classList.remove('validation-error');
-    if (!depressionExp) { $('expert-depression-exp').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05d1\u05d3\u05d9\u05db\u05d0\u05d5\u05df', 'error'); return; }
-    $('expert-depression-exp').classList.remove('validation-error');
+    if (!clinicalExp) { $('expert-clinical-exp').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05e7\u05dc\u05d9\u05e0\u05d9', 'error'); return; }
+    $('expert-clinical-exp').classList.remove('validation-error');
     if (!supervision) { $('expert-supervision').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05d1\u05d4\u05d3\u05e8\u05db\u05d4', 'error'); return; }
     $('expert-supervision').classList.remove('validation-error');
     expertName = name;
@@ -570,7 +568,7 @@
           years: years,
           years_post_specialization: yearsPost,
           therapeutic_approach: approach,
-          depression_experience: depressionExp,
+          clinical_experience: clinicalExp,
           supervision_experience: supervision
         })
       }).then(function() {
