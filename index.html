@@ -168,7 +168,7 @@
       <div style="font-size:0.9rem; line-height:1.8; color:var(--text); margin-bottom:20px;">
         <p>במחקר זה אנו בוחנים את איכות שיחות טיפוליות סימולטיביות שנוצרו באמצעות בינה מלאכותית בשני תנאים שונים. הפרסונה המוצגת היא <strong>שרה</strong>, מטופלת שתוכננה לתרגול מיומנויות טיפוליות.</p>
         <p style="margin-top:8px;">תתבקשו להעריך <strong>10 זוגות של שיחות</strong>. בכל זוג שתי שיחות עם אותו קלט ראשוני של מטפל/ת, בשתי הגישות השונות שאנו משווים.</p>
-        <p style="margin-top:8px;">לכל שיחה תדרגו 8 ממדים קליניים בסולם 1-7, ואז תתבקשו להשוות בין שתי השיחות ולנחש איזו מהן נוצרה באיזה תנאי.</p>
+        <p style="margin-top:8px;">לכל שיחה תדרגו <strong>14 ממדים</strong> בסולם 1-7 (8 ממדים כלליים של איכות + 6 ממדים על ארכיטקטורת CPE -- Clinical Prompt Engineering), ואז תתבקשו להשוות בין שתי השיחות ולנחש איזו מהן נוצרה באיזה תנאי.</p>
         <p style="margin-top:8px;">זמן משוער: 2-4 שעות בסה"כ (ניתן לעצור ולהמשיך). השתתפות התנדבותית. תודה אישית בעבודה המפורסמת.</p>
         <p style="margin-top:8px;"><strong>אוכלוסיית יעד:</strong> פסיכולוגים/ות קליניים/ות מומחים/ות ומטפלים/ות בעלי/ות ניסיון בישראל - מכל גישה טיפולית.</p>
       </div>
@@ -288,7 +288,7 @@
     </div>
     <a class="back-link" id="btn-back-pairs">&#8592; חזרה לרשימת הזוגות</a>
     <div class="instructions">
-      <strong>הנחיות:</strong> בכל זוג תראו שתי שיחות עם <strong>שרה</strong> — מטופלת שתוכננה לתרגול מיומנויות טיפוליות. בשתי השיחות המטפל/ת הוא באותה רמת מיומנות, אך השיחות נוצרו בתנאים שונים. <strong>שימו לב לדמות של שרה</strong> — עד כמה היא מרגישה אמיתית, עקבית, ומגיבה בהתאם לגישת המטפל/ת. קראו כל שיחה בעיון, דרגו אותה ב-8 ממדים, ואז השוו בין השתיים.
+      <strong>הנחיות:</strong> בכל זוג תראו שתי שיחות עם <strong>שרה</strong> — מטופלת שתוכננה לתרגול מיומנויות טיפוליות. בשתי השיחות המטפל/ת הוא באותה רמת מיומנות, אך השיחות נוצרו בתנאים שונים. <strong>שימו לב לדמות של שרה</strong> — עד כמה היא מרגישה אמיתית, עקבית, ומגיבה בהתאם לגישת המטפל/ת. קראו כל שיחה בעיון, דרגו אותה ב-14 ממדים, ואז השוו בין השתיים.
     </div>
     <div class="conv-tabs" id="conv-tabs">
       <button class="conv-tab active-a" id="tab-a">שיחה א'</button>
@@ -298,12 +298,12 @@
     <div id="chat-display-b" class="chat-container border-b" style="display:none;"></div>
     <div class="rating-section section-a" id="ratings-a-section">
       <h3>דירוג שיחה א'</h3>
-      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה א' ב-8 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה א' ב-14 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
       <div id="ratings-a"></div>
     </div>
     <div class="rating-section section-b" id="ratings-b-section">
       <h3>דירוג שיחה ב'</h3>
-      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה ב' ב-8 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
+      <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">דרגו את שיחה ב' ב-14 ממדים (1=כלל לא, 7=במידה רבה מאוד)</p>
       <div id="ratings-b"></div>
     </div>
     <div class="rating-section section-comparison" id="comparison-section">
@@ -670,9 +670,26 @@
   function renderDimensionRatings(containerId, side) {
     var container = $(containerId);
     while (container.firstChild) container.removeChild(container.firstChild);
+    var currentSection = null;
     DIMENSIONS.forEach(function(dim, idx) {
       var qNum = idx + 1;
       var name = side + '_dim_' + dim.id;
+      var dimSection = dim.section || 'general';
+      if (dimSection !== currentSection) {
+        currentSection = dimSection;
+        var divider = document.createElement('div');
+        divider.className = 'section-divider';
+        divider.style.cssText = 'margin: 20px 0 12px 0; padding: 8px 12px; background: #f1f5f9; border-right: 3px solid #64748b; border-radius: 4px; font-weight: 600; font-size: 0.9rem; color: #334155;';
+        if (dimSection === 'general') {
+          divider.textContent = '\u05de\u05de\u05d3\u05d9\u05dd \u05db\u05dc\u05dc\u05d9\u05d9\u05dd (\u05d0\u05d9\u05db\u05d5\u05ea \u05d4\u05e9\u05d9\u05d7\u05d4)';
+        } else if (dimSection === 'cpe') {
+          divider.textContent = '\u05de\u05de\u05d3\u05d9\u05dd \u05de\u05d1\u05e0\u05d9\u05d9\u05dd - \u05d0\u05e8\u05db\u05d9\u05d8\u05e7\u05d8\u05d5\u05e8\u05ea CPE (Clinical Prompt Engineering)';
+          divider.style.borderRightColor = '#7c3aed';
+          divider.style.background = '#f5f3ff';
+          divider.style.color = '#6d28d9';
+        }
+        container.appendChild(divider);
+      }
       var item = document.createElement('div');
       item.className = 'rating-item';
       var numSpan = document.createElement('span');
