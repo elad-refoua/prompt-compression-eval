@@ -166,10 +166,11 @@
     <div class="card">
       <h2>ברוכים הבאים</h2>
       <div style="font-size:0.9rem; line-height:1.8; color:var(--text); margin-bottom:20px;">
-        <p>במחקר זה אנו בוחנים את איכות שיחות טיפוליות שנוצרו באמצעות בינה מלאכותית.</p>
-        <p style="margin-top:8px;">תתבקשו להעריך <strong>זוגות של שיחות</strong>. בכל זוג שתי שיחות עם אותו קלט של מטפל/ת.</p>
-        <p style="margin-top:8px;">לכל שיחה תדרגו 7 ממדים בסולם 1-7, ואז תתבקשו להשוות בין שתי השיחות.</p>
-        <p style="margin-top:8px;">ההערכה אנונימית ולצרכי מחקר בלבד. זמן משוער: 15-20 דקות לזוג.</p>
+        <p>במחקר זה אנו בוחנים את איכות שיחות טיפוליות עם פרסונה בשם <strong>שרה</strong> — מורה בת 38 הסובלת מדיכאון — שנוצרו באמצעות בינה מלאכותית בשני תנאים שונים.</p>
+        <p style="margin-top:8px;">תתבקשו להעריך <strong>10 זוגות של שיחות</strong>. בכל זוג שתי שיחות עם אותו קלט ראשוני של מטפל/ת, בשתי הגישות השונות שאנו משווים.</p>
+        <p style="margin-top:8px;">לכל שיחה תדרגו 7 ממדים קליניים בסולם 1-7, ואז תתבקשו להשוות בין שתי השיחות ולנחש איזו מהן נוצרה באיזה תנאי.</p>
+        <p style="margin-top:8px;">זמן משוער: 2-4 שעות בסה"כ (ניתן לעצור ולהמשיך). השתתפות התנדבותית. תודה אישית בעבודה המפורסמת.</p>
+        <p style="margin-top:8px;"><strong>אוכלוסיית יעד:</strong> פסיכולוגים/ות קליניים/ות מומחים/ות בישראל.</p>
       </div>
       <div class="welcome-form">
         <div class="form-group">
@@ -177,28 +178,75 @@
           <input type="text" id="expert-name" placeholder="הזינו את שמכם" autocomplete="name">
         </div>
         <div class="form-group">
-          <label for="expert-role">תפקיד מקצועי</label>
+          <label for="expert-role">הכשרה מקצועית</label>
           <select id="expert-role">
-            <option value="">בחרו תפקיד...</option>
-            <option value="clinical_psychologist">פסיכולוג/ית קליני/ת</option>
-            <option value="therapist">מטפל/ת (עו"ס, ייעוץ, אחר)</option>
+            <option value="">בחרו...</option>
+            <option value="clinical_psychologist_specialist">פסיכולוג/ית קליני/ת מומחה/ית (גמר התמחות)</option>
+            <option value="clinical_psychologist_intern">פסיכולוג/ית קליני/ת בהתמחות</option>
+            <option value="psychologist_other">פסיכולוג/ית במסלול אחר (חינוכי/שיקומי/רפואי)</option>
+            <option value="social_worker_clinical">עובד/ת סוציאלי/ת קליני/ת</option>
             <option value="psychiatrist">פסיכיאטר/ית</option>
-            <option value="student_advanced">סטודנט/ית מתקדם/ת (פרקטיקום+)</option>
-            <option value="student">סטודנט/ית</option>
-            <option value="researcher">חוקר/ת</option>
+            <option value="therapist_other">מטפל/ת (הכשרה אחרת)</option>
             <option value="other">אחר</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="expert-years">שנות ניסיון קליני</label>
+          <label for="expert-years">שנות ניסיון קליני (סה"כ)</label>
           <select id="expert-years">
             <option value="">בחרו...</option>
-            <option value="0">ללא ניסיון קליני</option>
             <option value="0-2">0-2 שנים</option>
             <option value="3-5">3-5 שנים</option>
             <option value="6-10">6-10 שנים</option>
             <option value="11-20">11-20 שנים</option>
             <option value="20+">20+ שנים</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expert-years-post">שנים מאז סיום ההתמחות (אם רלוונטי)</label>
+          <select id="expert-years-post">
+            <option value="">בחרו...</option>
+            <option value="not_specialist">עדיין לא מומחה/ית</option>
+            <option value="0-2">0-2 שנים</option>
+            <option value="3-5">3-5 שנים</option>
+            <option value="6-10">6-10 שנים</option>
+            <option value="11-20">11-20 שנים</option>
+            <option value="20+">20+ שנים</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expert-approach">גישה טיפולית עיקרית</label>
+          <select id="expert-approach">
+            <option value="">בחרו...</option>
+            <option value="cbt">קוגניטיבית-התנהגותית (CBT)</option>
+            <option value="psychodynamic">פסיכודינמית</option>
+            <option value="integrative">אינטגרטיבית</option>
+            <option value="humanistic">הומניסטית/קיומית</option>
+            <option value="systemic">מערכתית/משפחתית</option>
+            <option value="dbt">DBT</option>
+            <option value="schema">סכמה-תרפיה</option>
+            <option value="act_mindfulness">ACT / מיינדפולנס</option>
+            <option value="other">אחר</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expert-depression-exp">ניסיון בטיפול בדיכאון</label>
+          <select id="expert-depression-exp">
+            <option value="">בחרו...</option>
+            <option value="primary">תחום מומחיות עיקרי</option>
+            <option value="frequent">מטפל/ת בדיכאון באופן קבוע</option>
+            <option value="occasional">מטפל/ת בדיכאון מדי פעם</option>
+            <option value="rare">ניסיון מועט</option>
+            <option value="none">ללא ניסיון ישיר</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="expert-supervision">ניסיון בהדרכה / הערכת מתמחים</label>
+          <select id="expert-supervision">
+            <option value="">בחרו...</option>
+            <option value="extensive">ניסיון נרחב (מעל 5 שנים)</option>
+            <option value="moderate">ניסיון בינוני (1-5 שנים)</option>
+            <option value="some">ניסיון מועט</option>
+            <option value="none">ללא ניסיון בהדרכה</option>
           </select>
         </div>
         <div class="form-group" id="returning-group" style="display:none;">
@@ -482,6 +530,10 @@
     var name = $('expert-name').value.trim();
     var role = $('expert-role').value;
     var years = $('expert-years').value;
+    var yearsPost = $('expert-years-post').value;
+    var approach = $('expert-approach').value;
+    var depressionExp = $('expert-depression-exp').value;
+    var supervision = $('expert-supervision').value;
     var returning = $('returning-select').value;
     if (returning) {
       expertId = returning;
@@ -492,10 +544,18 @@
     }
     if (!name) { $('expert-name').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d4\u05d6\u05d9\u05df \u05e9\u05dd', 'error'); return; }
     $('expert-name').classList.remove('validation-error');
-    if (!role) { $('expert-role').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05ea\u05e4\u05e7\u05d9\u05d3', 'error'); return; }
+    if (!role) { $('expert-role').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05d4\u05db\u05e9\u05e8\u05d4 \u05de\u05e7\u05e6\u05d5\u05e2\u05d9\u05ea', 'error'); return; }
     $('expert-role').classList.remove('validation-error');
     if (!years) { $('expert-years').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e9\u05e0\u05d5\u05ea \u05e0\u05d9\u05e1\u05d9\u05d5\u05df', 'error'); return; }
     $('expert-years').classList.remove('validation-error');
+    if (!yearsPost) { $('expert-years-post').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e9\u05e0\u05d9\u05dd \u05de\u05d0\u05d6 \u05d4\u05d4\u05ea\u05de\u05d7\u05d5\u05ea', 'error'); return; }
+    $('expert-years-post').classList.remove('validation-error');
+    if (!approach) { $('expert-approach').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05d2\u05d9\u05e9\u05d4 \u05d8\u05d9\u05e4\u05d5\u05dc\u05d9\u05ea', 'error'); return; }
+    $('expert-approach').classList.remove('validation-error');
+    if (!depressionExp) { $('expert-depression-exp').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05d1\u05d3\u05d9\u05db\u05d0\u05d5\u05df', 'error'); return; }
+    $('expert-depression-exp').classList.remove('validation-error');
+    if (!supervision) { $('expert-supervision').classList.add('validation-error'); showToast('\u05e0\u05d0 \u05dc\u05d1\u05d7\u05d5\u05e8 \u05e0\u05d9\u05e1\u05d9\u05d5\u05df \u05d1\u05d4\u05d3\u05e8\u05db\u05d4', 'error'); return; }
+    $('expert-supervision').classList.remove('validation-error');
     expertName = name;
     expertRole = role;
     expertYears = years;
@@ -503,7 +563,18 @@
       fetch(API_URL, {
         method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'register_expert', name: name, role: role, years: years })
+        body: JSON.stringify({
+          action: 'register_expert',
+          name: name,
+          role: role,
+          years: years,
+          years_post_specialization: yearsPost,
+          therapeutic_approach: approach,
+          depression_experience: depressionExp,
+          supervision_experience: supervision
+        })
+      }).then(function() {
+        return new Promise(function(resolve) { setTimeout(resolve, 1500); });
       }).then(function() {
         return fetch(API_URL + '?action=experts');
       }).then(function(r) { return r.json(); }).then(function(data) {
