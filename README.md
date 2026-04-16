@@ -301,3 +301,5 @@ Edit `config.json` to add/change conversation pairs. The format is:
 Each turn: `{ "role": "therapist"|"client", "text": "Hebrew text with **\"verbal\"** and [body language]" }`
 
 No code changes needed -- just update the JSON.
+
+<!-- move test 2026-04-16 -->
