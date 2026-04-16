@@ -379,3 +379,60 @@ cp C:/Users/user/Desktop/p
 ## 2026-04-11
 - 21:52 Run: cd "C:/Users/user/Desktop/projects/tune"
 - 21:54 Run: cd "C:/Users/user/Desktop/projects/tune/research/p
+- 21:54 Run: cd "C:/Users/user/Desktop/projects/tune/research/p
+- 21:54 Run: cd "C:/Users/user/Desktop/projects/tune/research/p
+- 21:55 Run: ls "C:/Users/user/Desktop/projects/prompt-compress
+- 21:55 Run: mv "C:/Users/user/Desktop/projects/tune/research/p
+- 22:21 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 22:24 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 22:24 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 22:24 Run: ls "C:/Users/user/Desktop/projects/tune/research/p
+- 22:24 Run: find "C:/Users/user/Desktop/projects/tune/" -maxde
+- 22:24 Run: ls "C:/Users/user/Desktop/projects/tune/" 2>&1
+- 22:25 Run: find "C:/Users/user/Desktop/projects/tune/" -maxde
+- 22:25 Run: find "C:/Users/user/Desktop/projects/tune/data/" -
+- 22:25 Run: wc -l "C:/Users/user/Desktop/projects/tune/docs/st
+- 22:25 Run: diff -q "C:/Users/user/Desktop/projects/tune/docs/
+- 22:26 Run: sleep 45
+- 22:27 Read: index.html
+- 22:27 Edit: index.html
+- 22:27 Read: recruitment-text-hebrew.md
+- 22:27 Run: ls C:/Users/user/Desktop/projects/prompt-compressi
+- 22:28 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 22:28 Create: user_claude_is_research_coordinator.md
+- 22:28 Read: MEMORY.md
+- 22:28 Edit: MEMORY.md
+- 22:29 Run: sleep 40
+- 22:32 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 22:33 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 22:33 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 22:33 Run: ls -la C:/Users/user/Desktop/projects/prompt-compr
+- 22:34 Read: IRB-application-draft.md
+- 22:49 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 22:50 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 22:55 Read: index.html
+- 22:55 Edit: index.html
+- 22:55 Edit: index.html
+- 22:55 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 22:55 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 22:56 Run: sleep 45
+- 22:57 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 22:57 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 23:27 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 23:29 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 23:30 Run: API="https://script.google.com/macros/s/AKfycbwx8X
+- 23:35 Read: whatsapp-message-hebrew.md
+- 23:35 Read: flyer.html
+- 23:36 Read: flyer-v2.html
+- 23:36 Run: wc -l C:/Users/user/Desktop/projects/prompt-compre
+- 23:36 Read: README.md
+- 23:36 Read: flyer-v2.html
+- 23:37 Edit: flyer.html
+- 23:38 Create: recruitment-text-hebrew.md
+
+## 2026-04-12
+- 00:13 Run: cd C:/Users/user/Desktop/projects/prompt-compressi
+- 00:14 Run: sleep 50
+- 00:54 Read: README.md
+- 00:54 Edit: README.md
+- 00:54 Edit: whatsapp-message-hebrew.md
